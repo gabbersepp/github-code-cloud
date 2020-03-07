@@ -28,9 +28,4 @@ HTML:
 
 ![](./assets/html-spans.jpg)
 
-You can see a live demo of the output at [biehler-josef.de](https://biehler-josef.de). Visit it in your desktop browser (mobile currently not supported) and you will see the tags in the background:
-
-![](./assets/bj.jpg)
-
-You can hover over each tag and you will see some description about every tag.
 
