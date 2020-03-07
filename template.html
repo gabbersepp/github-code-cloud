@@ -1,0 +1,52 @@
+
+<script src="wordcloud2.js"></script>
+<style>
+    body, html, #cloud, #cloud_container {    
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body>
+<div id="cloud">
+	<div id="cloud_container"></div>
+    <canvas id="cloud_canvas"></canvas>
+</div>
+</body>
+<script>
+var str = `#DATA#`;
+
+var cloudList = []
+
+var div = document.getElementById("cloud");
+var canvas = document.getElementById("cloud_canvas");
+
+canvas.height = div.offsetHeight;
+canvas.width  = div.offsetWidth;
+
+var options = 
+{
+    backgroundColor: "#eef1f9",
+  list : cloudList,
+  gridSize: Math.round(16 * document.getElementById('cloud_canvas').offsetWidth / 1024),
+   color: "#6a89cc",
+   rotateRatio: 1,
+  weightFactor: function (size) {
+    return Math.pow(size, 1.9) * document.getElementById('cloud_canvas').offsetWidth / 1024;
+  }
+}
+
+let data = str;
+data.split(/[\r\n]/).forEach(line => {
+    var splits = line.split(";");
+    cloudList.push([splits[0], 6, { text: splits[1]}])
+})
+
+cloudList.push(...cloudList);
+
+canvas.addEventListener("wordcloudstop", () => {
+    window.wordcloudfinished = true;
+})
+
+WordCloud([canvas, document.getElementById('cloud_container')], options);
+</script>
