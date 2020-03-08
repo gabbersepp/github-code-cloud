@@ -8,13 +8,13 @@ fs.ensureDirSync("./output");
 fs.ensureDirSync("./output/clones");
 fs.ensureDirSync("./output/export");
 
-async function doAll(githubName, githubToken, extensions) {
+async function generateCloud(githubName, githubToken, extensions) {
     await github.fetchRepositories(githubName, githubToken);
     await reader.readAndSaveAll(extensions);
     await cloud.saveImageAndHtml();
 }
 
-//doAll("gabbersepp", process.env.GITHUB_TOKEN, ["js", "asm", "cs", "ts", "java"]);
+//generateCloud("gabbersepp", process.env.GITHUB_TOKEN, ["js", "asm", "cs", "ts", "java"]);
 
 
-module.exports = { doAll }
+module.exports = { generateCloud }
