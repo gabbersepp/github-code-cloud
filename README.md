@@ -1,3 +1,5 @@
+[![NPM](https://img.shields.io/npm/v/github-code-cloud.svg)](https://www.npmjs.com/package/github-code-cloud)
+
 # Make a wordcloud from all of your public repositories hosted on github
 
 Enables you to create a wordcloud from all of your public github repositories. 
