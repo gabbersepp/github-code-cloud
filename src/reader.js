@@ -1,8 +1,7 @@
 var glob = require("glob")
 const fs = require("fs-extra");
-//const endings = ["js", "asm", "cs", "ts", "java"];
 
-async function readAndSaveAll(endings) {
+async function readAndSaveAll(endings, skipRation) {
     return new Promise(resolve => {
         glob(`output/clones/**/*.+(${endings.join("|")})`, function (er, files) {
             const obj = {};
@@ -21,14 +20,31 @@ async function readAndSaveAll(endings) {
                 });
             });
 
+            let array = [];
             // delete words that appear not often enough
             Object.keys(obj).forEach(key => {
                 if (obj[key] < 5) {
                     delete obj[key];
+                } else {
+                    array.push({
+                        key,
+                        amount: obj[key]
+                    });
                 }
-            })
+            });
+            array = array.sort((a, b) => b.amount - a.amount);
+            if (skipRation) {
+                array = array.slice(0, Math.ceil((1-skipRation) * array.length));
+            }
+            const max = array[0].amount;
+            const min = array[array.length - 1].amount;
+            // 50 sections
+            const sectionWidth = (max-min) / 20;
+            array.forEach(e => { 
+                e.amount = Math.ceil(e.amount / sectionWidth);
+            });
 
-            const csv = Object.keys(obj).map(key => `${key};${obj[key]}`).join("\r\n");
+            const csv = array.map(e => `${e.key};${e.amount}`).join("\r\n");
             fs.writeFileSync("output/export/data.csv", csv);
 
             resolve(obj);

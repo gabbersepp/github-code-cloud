@@ -24,6 +24,7 @@ function fetchRepositories(username, token) {
 
             for (let i = 0; i < repos.length; i++) {
                 let x = repos[i];
+                console.log(`clone/pull ${x.cloneUrl}`);
                 await new Promise(cloneResolved => {
                     cloneOrPull(x.cloneUrl, {
                         implementation: "subprocess",

@@ -1,11 +1,15 @@
 {
   "name": "github-code-cloud",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Easily create a wordcloud from all of your github repositories. A PNG and a HTML files is exported. Using the HTMl file you are able to apply some fancy hover stuff.",
   "main": "src/index.js",
-  "scripts": {
-  },
-  "keywords": ["puppeteer", "javascript", "wordcloud", "github"],
+  "scripts": {},
+  "keywords": [
+    "puppeteer",
+    "javascript",
+    "wordcloud",
+    "github"
+  ],
   "author": "Josef Biehler <gabbersepp@googlemail.com> (https://biehler-josef.de)",
   "repository": {
     "type": "git",
@@ -16,6 +20,7 @@
     "fs-extra": "^8.1.0",
     "git-clone-or-pull": "^4.0.0",
     "glob": "^7.1.6",
+    "node_modules-path": "^2.0.5",
     "puppeteer": "^2.1.1",
     "request": "^2.88.2",
     "wordcloud": "^1.1.1"

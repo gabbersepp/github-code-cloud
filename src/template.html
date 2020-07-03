@@ -24,25 +24,25 @@ var canvas = document.getElementById("cloud_canvas");
 canvas.height = div.offsetHeight;
 canvas.width  = div.offsetWidth;
 
+var optionsToMergeJson = `#TOMERGE#`;
+
 var options = 
 {
     backgroundColor: "#eef1f9",
   list : cloudList,
-  gridSize: Math.round(16 * document.getElementById('cloud_canvas').offsetWidth / 1024),
+  gridSize: 1,
    color: "#6a89cc",
    rotateRatio: 1,
-  weightFactor: function (size) {
-    return Math.pow(size, 1.9) * document.getElementById('cloud_canvas').offsetWidth / 1024;
-  }
+  weightFactor: 10
 }
+
+options = { ...options, ...JSON.parse(optionsToMergeJson)};
 
 let data = str;
 data.split(/[\r\n]/).forEach(line => {
     var splits = line.split(";");
-    cloudList.push([splits[0], 6, { text: splits[1]}])
+    cloudList.push([splits[0], splits[1], { text: splits[1]}])
 })
-
-cloudList.push(...cloudList);
 
 canvas.addEventListener("wordcloudstop", () => {
     window.wordcloudfinished = true;
