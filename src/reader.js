@@ -1,9 +1,13 @@
 var glob = require("glob")
 const fs = require("fs-extra");
+const path = require("path");
 
-async function readAndSaveAll(endings, skipRation) {
+async function readAndSaveAll(outputFolder, endings, skipRation) {
+    const exportDir = path.join(outputFolder, "export");
+    fs.ensureDirSync(exportDir);
+    
     return new Promise(resolve => {
-        glob(`output/clones/**/*.+(${endings.join("|")})`, function (er, files) {
+        glob(`${path.join(outputFolder, "clones", "**/*")}.+(${endings.join("|")})`, function (er, files) {
             const obj = {};
             
             files.forEach(filePath => {
@@ -45,7 +49,7 @@ async function readAndSaveAll(endings, skipRation) {
             });
 
             const csv = array.map(e => `${e.key};${e.amount}`).join("\r\n");
-            fs.writeFileSync("output/export/data.csv", csv);
+            fs.writeFileSync(path.join(exportDir, "data.csv"), csv);
 
             resolve(obj);
         })

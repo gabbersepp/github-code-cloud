@@ -1,9 +1,12 @@
 const request = require("request");
 const cloneOrPull = require('git-clone-or-pull');
 const path = require('path');
+const fs = require("fs-extra");
 
 //process.env.GITHUB_TOKEN
-function fetchRepositories(username, token) {
+function fetchRepositories(outputFolder, username, token) {
+    const clonesDir = path.join(outputFolder, "clones");
+    fs.ensureDirSync(clonesDir);
     return new Promise(resolve => {
         request({ 
             url: `https://api.github.com/users/${username}/repos?per_page=100`,
@@ -28,7 +31,7 @@ function fetchRepositories(username, token) {
                 await new Promise(cloneResolved => {
                     cloneOrPull(x.cloneUrl, {
                         implementation: "subprocess",
-                        path: path.join(process.cwd(), "output", "clones", x.name)
+                        path: path.join(clonesDir, x.name)
                     }, function(err) {
                         if (err) {
                             console.error(err);

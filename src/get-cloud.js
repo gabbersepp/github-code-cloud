@@ -27,21 +27,21 @@ async function waitUntilCloudIsReady(page) {
     });
 }
 
-async function saveImageAndHtml(optionsToMerge, outputFolder) {
+async function saveImageAndHtml(outputFolder, optionsToMerge) {
     try {
-        const csvData = fs.readFileSync(path.join(process.cwd(), "output", "export", "data.csv")).toString();
+        const csvData = fs.readFileSync(path.join(outputFolder, "export", "data.csv")).toString();
         let template = fs.readFileSync(path.join(__dirname, "template.html")).toString();
         template = template.replace("#DATA#", csvData);
         template = template.replace("#TOMERGE#", JSON.stringify(optionsToMerge || {}));
-        fs.writeFileSync(path.join(process.cwd(), "output", "template.html"), template);
-        fs.copyFileSync(path.join(nm(), "wordcloud", "src", "wordcloud2.js"), "output/wordcloud2.js");
+        fs.writeFileSync(path.join(outputFolder, "template.html"), template);
+        fs.copyFileSync(path.join(nm(), "wordcloud", "src", "wordcloud2.js"), path.join(outputFolder, "wordcloud2.js"));
         const browser = await puppeteer.launch()
         const page = await browser.newPage();
         await page.setViewport({
             width: 1280,
             height: 1024
         });
-        await page.goto(`file://${process.cwd()}/output/template.html`);
+        await page.goto(`file://${outputFolder}/template.html`);
 
         const cloudReady = await waitUntilCloudIsReady(page);
         if (!cloudReady) {
@@ -50,7 +50,7 @@ async function saveImageAndHtml(optionsToMerge, outputFolder) {
         const nodeHander = await page.$("#cloud_container");
         const innerHtml = await page.evaluate(node => node.innerHTML.toString(), nodeHander);
         const html = innerHtml.toString();
-        fs.writeFileSync(path.join(outputFolder || process.cwd(), "output", "export", "output.html"), html);
+        fs.writeFileSync(path.join(outputFolder, "export", "output.html"), html);
         nodeHander.dispose();
         const canvasNodeHandler = await page.$("#cloud_canvas");
         const imgData = await page.evaluate(node => {
@@ -60,7 +60,7 @@ async function saveImageAndHtml(optionsToMerge, outputFolder) {
         var data = imgData.replace(/^data:image\/\w+;base64,/, "");
         var buffer = new Buffer(data, 'base64');
 
-        fs.writeFileSync(path.join(outputFolder || process.cwd(), "output", "export", "img.png"), buffer);
+        fs.writeFileSync(path.join(outputFolder, "export", "img.png"), buffer);
         canvasNodeHandler.dispose();
     
         await browser.close();
