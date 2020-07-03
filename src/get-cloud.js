@@ -27,7 +27,7 @@ async function waitUntilCloudIsReady(page) {
     });
 }
 
-async function saveImageAndHtml(optionsToMerge) {
+async function saveImageAndHtml(optionsToMerge, outputFolder) {
     try {
         const csvData = fs.readFileSync(path.join(process.cwd(), "output", "export", "data.csv")).toString();
         let template = fs.readFileSync(path.join(__dirname, "template.html")).toString();
@@ -50,7 +50,7 @@ async function saveImageAndHtml(optionsToMerge) {
         const nodeHander = await page.$("#cloud_container");
         const innerHtml = await page.evaluate(node => node.innerHTML.toString(), nodeHander);
         const html = innerHtml.toString();
-        fs.writeFileSync(path.join(process.cwd(), "output", "export", "output.html"), html);
+        fs.writeFileSync(path.join(outputFolder || process.cwd(), "output", "export", "output.html"), html);
         nodeHander.dispose();
         const canvasNodeHandler = await page.$("#cloud_canvas");
         const imgData = await page.evaluate(node => {
@@ -60,7 +60,7 @@ async function saveImageAndHtml(optionsToMerge) {
         var data = imgData.replace(/^data:image\/\w+;base64,/, "");
         var buffer = new Buffer(data, 'base64');
 
-        fs.writeFileSync(path.join(process.cwd(), "output", "export", "img.png"), buffer);
+        fs.writeFileSync(path.join(outputFolder || process.cwd(), "output", "export", "img.png"), buffer);
         canvasNodeHandler.dispose();
     
         await browser.close();
