@@ -10,6 +10,7 @@ async function generateCloud(githubName, githubToken, extensions, outputFolder, 
         outputFolder = path.join(process.cwd(), "output");
     }
 
+    outputFolder = path.resolve(outputFolder);
     fs.ensureDirSync(outputFolder);
 
     await github.fetchRepositories(outputFolder, githubName, githubToken);
@@ -18,6 +19,5 @@ async function generateCloud(githubName, githubToken, extensions, outputFolder, 
 }
 
 //generateCloud("gabbersepp", process.env.GITHUB_TOKEN, ["js", "asm", "cs", "ts", "java", "cpp"],  path.join(process.cwd(), "temp") , 0.8, { color: "black" });
-
 
 module.exports = { generateCloud }
