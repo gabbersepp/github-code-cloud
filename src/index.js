@@ -17,7 +17,7 @@ async function generateCloud(githubName, githubToken, extensions, outputFolder, 
     await cloud.saveImageAndHtml(outputFolder, optionsToMerge);
 }
 
-generateCloud("gabbersepp", process.env.GITHUB_TOKEN, ["js", "asm", "cs", "ts", "java", "cpp"],  path.join(process.cwd(), "temp") , 0.8, { color: "black" });
+//generateCloud("gabbersepp", process.env.GITHUB_TOKEN, ["js", "asm", "cs", "ts", "java", "cpp"],  path.join(process.cwd(), "temp") , 0.8, { color: "black" });
 
 
 module.exports = { generateCloud }
