@@ -32,14 +32,14 @@ async function saveImageAndHtml(outputFolder, optionsToMerge) {
         const csvData = fs.readFileSync(path.join(outputFolder, "export", "data.csv")).toString();
         let template = fs.readFileSync(path.join(__dirname, "template.html")).toString();
         template = template.replace("#DATA#", csvData);
-        template = template.replace("#TOMERGE#", JSON.stringify(optionsToMerge || {}));
+        template = template.replace("#TOMERGE#", JSON.stringify(optionsToMerge));
         fs.writeFileSync(path.join(outputFolder, "template.html"), template);
         fs.copyFileSync(path.join(nm(), "wordcloud", "src", "wordcloud2.js"), path.join(outputFolder, "wordcloud2.js"));
         const browser = await puppeteer.launch()
         const page = await browser.newPage();
         await page.setViewport({
-            width: 1280,
-            height: 1024
+            width: optionsToMerge.width || 1280,
+            height: optionsToMerge.height || 1024
         });
         await page.goto(`file://${outputFolder}/template.html`);
 

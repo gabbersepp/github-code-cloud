@@ -6,6 +6,7 @@ const github = require("./github");
 const cloud = require("./get-cloud");
 
 async function generateCloud(githubName, githubToken, extensions, outputFolder, skipRation, optionsToMerge) {
+    optionsToMerge = optionsToMerge || {};
     if (!outputFolder) {
         outputFolder = path.join(process.cwd(), "output");
     }
