@@ -3,14 +3,14 @@ const fs = require("fs-extra");
 const path = require("path");
 const nm = require("node_modules-path");
 
-async function waitUntilCloudIsReady(page) {
+async function waitUntilCloudIsReady(page, maxRetry) {
     return await page.evaluate(async () => {
         function sleep() {
             return new Promise(resolve => {
                 setTimeout(resolve, 1000);
             })
         }
-        let maxRetry = 500;
+        
         let success = false;
 
         while(maxRetry > 0) {
@@ -28,6 +28,7 @@ async function waitUntilCloudIsReady(page) {
 }
 
 async function saveImageAndHtml(outputFolder, optionsToMerge) {
+    optionsToMerge.maxRetry = optionsToMerge.maxRetry || 500;
     try {
         const csvData = fs.readFileSync(path.join(outputFolder, "export", "data.csv")).toString();
         let template = fs.readFileSync(path.join(__dirname, "template.html")).toString();
@@ -43,9 +44,9 @@ async function saveImageAndHtml(outputFolder, optionsToMerge) {
         });
         await page.goto(`file://${outputFolder}/template.html`);
 
-        const cloudReady = await waitUntilCloudIsReady(page);
+        const cloudReady = await waitUntilCloudIsReady(page, optionsToMerge.maxRetry);
         if (!cloudReady) {
-            throw new Error("cloud could not be finished in 500 seconds");
+            throw new Error(`cloud could not be finished in ${optionsToMerge.maxRetry} seconds`);
         }
         const nodeHander = await page.$("#cloud_container");
         const innerHtml = await page.evaluate(node => node.innerHTML.toString(), nodeHander);
