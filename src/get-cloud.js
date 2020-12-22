@@ -27,7 +27,7 @@ async function waitUntilCloudIsReady(page, maxRetry) {
     });
 }
 
-async function saveImageAndHtml(outputFolder, optionsToMerge) {
+async function saveImageAndHtml(outputFolder, optionsToMerge, puppeteerOptions) {
     optionsToMerge.maxRetry = optionsToMerge.maxRetry || 500;
     try {
         const csvData = fs.readFileSync(path.join(outputFolder, "export", "data.csv")).toString();
@@ -36,7 +36,7 @@ async function saveImageAndHtml(outputFolder, optionsToMerge) {
         template = template.replace("#TOMERGE#", JSON.stringify(optionsToMerge));
         fs.writeFileSync(path.join(outputFolder, "template.html"), template);
         fs.copyFileSync(path.join(nm(), "wordcloud", "src", "wordcloud2.js"), path.join(outputFolder, "wordcloud2.js"));
-        const browser = await puppeteer.launch()
+        const browser = await puppeteer.launch(puppeteerOptions);
         const page = await browser.newPage();
         await page.setViewport({
             width: optionsToMerge.width || 1280,
