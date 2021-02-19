@@ -5,7 +5,7 @@ const reader = require("./reader");
 const github = require("./github");
 const cloud = require("./get-cloud");
 
-async function generateCloud(githubName, githubToken, extensions, outputFolder, skipRation, optionsToMerge, puppeteerOptions, takeOnly) {
+async function generateCloud(githubName, githubToken, extensions, outputFolder, skipRation, optionsToMerge, puppeteerOptions) {
     optionsToMerge = optionsToMerge || {};
     if (!outputFolder) {
         outputFolder = path.join(process.cwd(), "output");
@@ -16,7 +16,7 @@ async function generateCloud(githubName, githubToken, extensions, outputFolder, 
 
     const repos = await github.fetchRepositories(outputFolder, githubName, githubToken);
     console.log(`pulled ${repos.length} repositories`);
-    const readerResult = await reader.readAndSaveAll(outputFolder, extensions, skipRation, takeOnly);
+    const readerResult = await reader.readAndSaveAll(outputFolder, extensions, skipRation);
     console.log(`got reader result: \r\n${JSON.stringify(readerResult)}\r\n`);
     await cloud.saveImageAndHtml(outputFolder, optionsToMerge, puppeteerOptions);
 }

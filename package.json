@@ -1,6 +1,6 @@
 {
   "name": "github-code-cloud",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Easily create a wordcloud from all of your github repositories. A PNG and a HTML files is exported. Using the HTMl file you are able to apply some fancy hover stuff.",
   "main": "src/index.js",
   "scripts": {},
