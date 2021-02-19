@@ -2,7 +2,7 @@ var glob = require("glob")
 const fs = require("fs-extra");
 const path = require("path");
 
-async function readAndSaveAll(outputFolder, endings, skipRation) {
+async function readAndSaveAll(outputFolder, endings, skipRation, takeOnly) {
     const exportDir = path.join(outputFolder, "export");
     fs.ensureDirSync(exportDir);
     
@@ -48,6 +48,12 @@ async function readAndSaveAll(outputFolder, endings, skipRation) {
                 e.amount = Math.ceil(e.amount / sectionWidth);
             });
 
+            array = array.sort((a, b) => b.amount - a.amount);
+
+            if (takeOnly && takeOnly > 0) {
+                array = array.slice(0, takeOnly)
+            }
+            
             const csv = array.map(e => `${e.key};${e.amount}`).join("\r\n");
             fs.writeFileSync(path.join(exportDir, "data.csv"), csv);
 

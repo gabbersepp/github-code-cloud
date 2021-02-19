@@ -38,18 +38,46 @@ async function saveImageAndHtml(outputFolder, optionsToMerge, puppeteerOptions) 
         template = template.replace("#DATA#", csvData);
         template = template.replace("#TOMERGE#", JSON.stringify(optionsToMerge));
         fs.writeFileSync(path.join(outputFolder, "template.html"), template);
-        fs.copyFileSync(path.join(nm(), "wordcloud", "src", "wordcloud2.js"), path.join(outputFolder, "wordcloud2.js"));
+
+        console.log("prepare wordcloud2.js to fix a bug")
+        const wc2DestPath = path.join(outputFolder, "wordcloud2.js");
+        fs.copyFileSync(path.join(nm(), "wordcloud", "src", "wordcloud2.js"), wc2DestPath);
+        let wc2Content = fs.readFileSync(wc2DestPath).toString();
+        wc2Content = wc2Content.replace("var imageData = fctx.getImageData(0, 0, width, height).data", `
+        let imageData;
+        // Get the pixels of the text
+        try {
+        imageData = fctx.getImageData(0, 0, width, height).data
+        } catch (e){
+          console.log(\`got an error but inored: \${e}\`)
+        }
+        `)
+        fs.writeFileSync(wc2DestPath, wc2Content);
+
+        console.log("launch puppeteer");
+
         const browser = await puppeteer.launch(puppeteerOptions);
         const page = await browser.newPage();
         await page.setViewport({
             width: optionsToMerge.width || 1280,
             height: optionsToMerge.height || 1024
         });
+
+        console.log("navigate to page");
+
+        page.on("pageerror", (err) => {  
+            theTempValue = err.toString();
+            console.error("Error: " + theTempValue); 
+            process.exit(-1);
+        });
+
         await page.goto(`file://${outputFolder}/template.html`);
 
         const cloudReady = await waitUntilCloudIsReady(page, optionsToMerge.maxRetry);
         if (!cloudReady) {
             throw new Error(`cloud could not be finished in ${optionsToMerge.maxRetry} seconds`);
+        } else {
+            console.log("finished rendering");
         }
         const nodeHander = await page.$("#cloud_container");
         const innerHtml = await page.evaluate(node => node.innerHTML.toString(), nodeHander);
@@ -71,6 +99,7 @@ async function saveImageAndHtml(outputFolder, optionsToMerge, puppeteerOptions) 
 
     } catch (e) {
         console.error(e);
+        throw e;
     }
 }
 
