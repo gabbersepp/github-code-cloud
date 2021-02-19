@@ -3,8 +3,11 @@ const fs = require("fs-extra");
 const path = require("path");
 const nm = require("node_modules-path");
 
-async function waitUntilCloudIsReady(page, maxRetry) {
-    return await page.evaluate(async () => {
+async function waitUntilCloudIsReady(page, mR) {
+    // this code is executed in the context of the rendered page
+    // you can not access variables from the outer context
+    // use this: https://stackoverflow.com/questions/46088351/how-can-i-pass-variable-into-an-evaluate-function
+    return await page.evaluate(async (maxRetry) => {
         function sleep() {
             return new Promise(resolve => {
                 setTimeout(resolve, 1000);
@@ -24,7 +27,7 @@ async function waitUntilCloudIsReady(page, maxRetry) {
         }
 
         return success;
-    });
+    }, mR);
 }
 
 async function saveImageAndHtml(outputFolder, optionsToMerge, puppeteerOptions) {
